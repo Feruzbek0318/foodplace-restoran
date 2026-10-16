@@ -5,6 +5,7 @@ import { AsyncImage } from '../common/AsyncImage';
 import { UserRole } from '../../types';
 import { tr, trMessage } from '../../locales';
 import { LanguageSwitcher } from '../common/LanguageSwitcher';
+import { version as APP_VERSION } from '../../../package.json';
 
 interface LoginViewProps {
   onSuccessLogin: () => void;
@@ -127,7 +128,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onSuccessLogin }) => {
         </div>
 
         <div className="relative z-10 text-xs text-slate-500 font-mono">
-          FoodPlace v2.4 • PostgreSQL & Express Architecture
+          FoodPlace v{APP_VERSION}
         </div>
       </div>
 
@@ -296,9 +297,11 @@ export const LoginView: React.FC<LoginViewProps> = ({ onSuccessLogin }) => {
             <p className="text-xs text-slate-400 leading-relaxed">
               {tr("Xavfsizlik maqsadida parolni qayta tiklash Super Admin orqali amalga oshiriladi. Super Admin bilan bog‘laning yoki admin hisobi orqali kiring.")}
             </p>
-            <div className="p-3 rounded-xl bg-slate-800 text-xs text-slate-300 font-mono">
-              Admin kontakt: +998 71 200 11 22
-            </div>
+            {store.settings.phone && (
+              <div className="p-3 rounded-xl bg-slate-800 text-xs text-slate-300 font-mono">
+                {tr('Restoran telefoni')}: {store.settings.phone}
+              </div>
+            )}
             <button
               onClick={() => setShowForgotModal(false)}
               className="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-xs font-bold transition"

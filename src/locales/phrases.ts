@@ -467,4 +467,7 @@ export const phrases: Record<string, [string, string]> = {
   "Zaxira nusxa dasturning yangiroq versiyasida yaratilgan": ["Копия создана в более новой версии программы", "The backup was made by a newer version of the app"],
   "Zaxira nusxada birorta ham xodim akkaunti yo‘q": ["В копии нет ни одного аккаунта сотрудника", "The backup contains no staff accounts"],
   "Fayl o‘qilmadi: JSON formati noto‘g‘ri": ["Файл не прочитан: неверный формат JSON", "Could not read file: invalid JSON"],
+  "Restoran telefoni": ["Телефон ресторана", "Restaurant phone"],
+  "Tizimdagi muhim amallar tarixi: kim, qachon va nima qildi": ["История важных действий в системе: кто, когда и что сделал", "History of key actions: who did what and when"],
+  "Interfeysdan tahrirlab bo‘lmaydi": ["Нельзя изменить через интерфейс", "Not editable from the app"],
 };

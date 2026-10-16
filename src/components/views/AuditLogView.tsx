@@ -73,13 +73,13 @@ export const AuditLogView: React.FC = () => {
             {tr("Audit Log va Xavfsizlik Jurnali")}
           </h1>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            {tr("O‘chirib bo‘lmaydigan (Immutable) operatsiyalar tarixi va tizim xavfsizlik nazorati")}
+            {tr("Tizimdagi muhim amallar tarixi: kim, qachon va nima qildi")}
           </p>
         </div>
 
         <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-900 text-white text-xs font-mono shadow-sm">
           <Lock className="w-3.5 h-3.5 text-emerald-400" />
-          <span>{tr("WORM (Write Once, Read Many) Saqlash")}</span>
+          <span>{tr("Interfeysdan tahrirlab bo‘lmaydi")}</span>
         </div>
       </div>
 
