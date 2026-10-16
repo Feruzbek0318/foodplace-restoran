@@ -7,19 +7,19 @@
   "scripts": {
     "start": "electron .",
     "build:windows": "electron-builder --win --x64",
-    "prebuild": "rm -rf app && cp -r ../dist app"
+    "prebuild": "rm -rf app && cp -r ../dist app",
+    "build:mac": "electron-builder --mac --universal"
   },
-  "author": "FoodPlace",
-  "copyright": "Copyright © 2026 FoodPlace",
+  "author": "Feruzbek Namozboyev",
+  "copyright": "Copyright © 2026 Feruzbek Namozboyev",
   "license": "MIT",
   "dependencies": {},
   "devDependencies": {
-    "electron": "28.2.3",
-    "electron-builder": "^24.9.1"
+    "electron": "44.4.5"
   },
   "build": {
     "appId": "com.foodplace.restaurant",
-    "productName": "FoodPlace Restaurant",
+    "productName": "FoodPlace",
     "directories": {
       "output": "installer",
       "buildResources": "assets"
@@ -34,9 +34,9 @@
       "oneClick": false,
       "perMachine": false,
       "allowToChangeInstallationDirectory": true,
-      "shortcutName": "FoodPlace Restaurant",
-      "artifactName": "FoodPlace-Restaurant-Setup.exe",
-      "uninstallDisplayName": "FoodPlace Restaurant",
+      "shortcutName": "FoodPlace",
+      "artifactName": "FoodPlace-${version}-windows-setup.${ext}",
+      "uninstallDisplayName": "FoodPlace",
       "createDesktopShortcut": "always",
       "createStartMenuShortcut": true,
       "runAfterFinish": true
@@ -45,6 +45,20 @@
       "electron/**/*",
       "app/**/*",
       "package.json"
-    ]
+    ],
+    "artifactName": "FoodPlace-${version}-${os}.${ext}",
+    "mac": {
+      "icon": "assets/icon.png",
+      "category": "public.app-category.business",
+      "target": [
+        "dmg"
+      ],
+      "identity": "-",
+      "hardenedRuntime": false
+    },
+    "dmg": {
+      "artifactName": "FoodPlace-${version}-macos.${ext}",
+      "title": "FoodPlace"
+    }
   }
 }

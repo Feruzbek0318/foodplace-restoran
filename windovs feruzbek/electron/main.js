@@ -9,7 +9,7 @@ function createWindow() {
     height: 800,
     minWidth: 1000,
     minHeight: 650,
-    title: "FoodPlace Restaurant",
+    title: "FoodPlace",
     icon: path.join(__dirname, '../assets/icon.png'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),

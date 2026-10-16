@@ -8,6 +8,19 @@ Ma'lumotlar brauzerning `localStorage` xotirasida saqlanadi (server yoki ma'lumo
 
 **Jonli demo:** https://feruzbek0318.github.io/foodplace-restoran/ — har bir tashrif buyuruvchining ma'lumotlari faqat o'z brauzerida saqlanadi.
 
+## Yuklab olish
+
+Tayyor ilovalar [Releases](https://github.com/Feruzbek0318/foodplace-restoran/releases/latest) sahifasida:
+
+| Platforma | Fayl | O'rnatish |
+|---|---|---|
+| Windows 10/11 (64-bit) | `FoodPlace-1.0.0-windows-setup.exe` | O'rnatuvchini ishga tushiring. SmartScreen chiqsa: **Batafsil → Baribir ishga tushirish** (ilova imzolanmagan). |
+| macOS 11+ (Intel va Apple Silicon) | `FoodPlace-1.0.0-macos.dmg` | DMG'ni oching va FoodPlace'ni **Applications** papkasiga torting. Birinchi marta: o'ng tugma bilan bosib **Open** tanlang. |
+| Android 7.0+ | `FoodPlace-1.0.0-android.apk` | Telefon yoki planshetga yuklab oching; "Noma'lum manbalardan o'rnatish"ga ruxsat bering. |
+| Manba kodi | `Source code (zip / tar.gz)` | Har bir relizga GitHub avtomatik qo'shadi. |
+
+Har bir qurilmada ma'lumotlar shu qurilmaning o'zida saqlanadi. Boshqa qurilmaga o'tkazish uchun **Sozlamalar → zaxira nusxa** faylidan foydalaning.
+
 ![Bosh sahifa](docs/screenshots/03-bosh-sahifa.jpg)
 
 ## Qanday ishlaydi
@@ -87,7 +100,11 @@ So'ng brauzerda http://localhost:3000 ni oching. Birinchi ochilishda admin akkau
 | `npm run build` | `dist/` ga production build |
 | `npm run lint` | TypeScript tekshiruvi |
 | `npm run electron` | Build qilib, desktop (Electron) ilova sifatida ochadi |
-| `npm run build:windows` | Windows o'rnatuvchisini (`windovs feruzbek/installer`) yig'adi |
+| `npm run build:windows` | Windows o'rnatuvchisi (EXE) → `windovs feruzbek/installer/` |
+| `npm run build:mac` | macOS DMG (Intel + Apple Silicon) → `windovs feruzbek/installer/` |
+| `npm run build:android` | Android APK (Capacitor) → `android/app/build/outputs/apk/release/` |
+
+Windows va macOS fayllari macOS kompyuterda ham yig'iladi (electron-builder). Android uchun Android SDK va JDK 17+ kerak (`JAVA_HOME`, `ANDROID_HOME`). Ilova belgisi manbasi: `windovs feruzbek/assets/src/icon.html`.
 
 ## GitHub Pages'ga joylash
 
@@ -103,7 +120,8 @@ cd dist && touch .nojekyll && git init -b gh-pages && git add -A && git commit -
 - `src/services/store.ts` — barcha ma'lumotlar va biznes mantiq (buyurtmalar, smenalar, ombor, xodimlar)
 - `src/components/views/` — har bir bo'lim sahifasi
 - `src/locales/` — tarjimalar: `index.ts` (kalitlar, `tr()`), `phrases.ts` (iboralar), `dynamic.ts` (jurnal/bildirishnoma qoliplari)
-- `windovs feruzbek/` — Electron qobig'i va Windows o'rnatuvchi sozlamalari
+- `windovs feruzbek/` — Electron qobig'i: Windows va macOS o'rnatuvchi sozlamalari
+- `android/` — Capacitor orqali Android ilova (`capacitor.config.ts`)
 
 ## Banner
 

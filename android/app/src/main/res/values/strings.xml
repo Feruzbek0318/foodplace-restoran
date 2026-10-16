@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">FoodPlace</string>
+    <string name="title_activity_main">FoodPlace</string>
+    <string name="package_name">uz.feruzbek.foodplace</string>
+    <string name="custom_url_scheme">uz.feruzbek.foodplace</string>
+</resources>

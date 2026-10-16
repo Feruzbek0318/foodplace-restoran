@@ -10,9 +10,13 @@
     "clean": "rm -rf dist server.js",
     "lint": "tsc --noEmit",
     "electron": "npm run build && rm -rf \"windovs feruzbek/app\" && cp -r dist \"windovs feruzbek/app\" && electron \"windovs feruzbek\"",
-    "build:windows": "npm run build && rm -rf \"windovs feruzbek/app\" && cp -r dist \"windovs feruzbek/app\" && cd \"windovs feruzbek\" && npm run build:windows"
+    "build:windows": "npm run build && rm -rf \"windovs feruzbek/app\" && cp -r dist \"windovs feruzbek/app\" && cd \"windovs feruzbek\" && npm run build:windows",
+    "build:mac": "npm run build && rm -rf \"windovs feruzbek/app\" && cp -r dist \"windovs feruzbek/app\" && cd \"windovs feruzbek\" && npm run build:mac",
+    "build:android": "npm run build && npx cap sync android && cd android && ./gradlew assembleRelease"
   },
   "dependencies": {
+    "@capacitor/android": "^8.5.3",
+    "@capacitor/core": "^8.5.3",
     "@tailwindcss/vite": "^4.3.3",
     "@types/qrcode": "^1.5.5",
     "@vitejs/plugin-react": "^6.1.1",
@@ -27,6 +31,7 @@
     "vite": "^8.3.0"
   },
   "devDependencies": {
+    "@capacitor/cli": "^8.5.3",
     "@types/node": "^22.14.0",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
