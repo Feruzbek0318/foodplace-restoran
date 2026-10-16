@@ -4,6 +4,8 @@ Restoran va kafe uchun boshqaruv paneli: kassa (POS), oshxona ekrani (KDS), stol
 
 Ma'lumotlar brauzerning `localStorage` xotirasida saqlanadi (server yoki ma'lumotlar bazasi talab qilinmaydi).
 
+**Jonli demo:** https://feruzbek0318.github.io/foodplace-restoran/ — har bir tashrif buyuruvchining ma'lumotlari faqat o'z brauzerida saqlanadi.
+
 ![Bosh sahifa](docs/screenshots/03-bosh-sahifa.jpg)
 
 ## Qanday ishlaydi
@@ -84,6 +86,15 @@ So'ng brauzerda http://localhost:3000 ni oching. Birinchi ochilishda admin akkau
 | `npm run lint` | TypeScript tekshiruvi |
 | `npm run electron` | Build qilib, desktop (Electron) ilova sifatida ochadi |
 | `npm run build:windows` | Windows o'rnatuvchisini (`windovs feruzbek/installer`) yig'adi |
+
+## GitHub Pages'ga joylash
+
+Sayt `gh-pages` tarmog'idan beriladi. Yangilash uchun build qilib, `dist/` ichidagini shu tarmoqqa push qiling:
+
+```bash
+npm run build
+cd dist && touch .nojekyll && git init -b gh-pages && git add -A && git commit -m deploy && git push -f https://github.com/Feruzbek0318/foodplace-restoran.git gh-pages && rm -rf .git
+```
 
 ## Tuzilishi
 
