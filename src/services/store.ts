@@ -257,6 +257,8 @@ class Store {
     }
     this.currentUser = null;
     saveToStorage('currentUser', null);
+    // Sessions without "remember me" live in sessionStorage; clear them too
+    sessionStorage.removeItem(STORAGE_PREFIX + 'currentUser');
     this.notify();
   }
 
