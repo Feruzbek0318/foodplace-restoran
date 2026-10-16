@@ -1,0 +1,38 @@
+rules_version = '2';
+
+// Access model: every device signs in anonymously, and a restaurant can only be reached by
+// its 32-character random key (the document id). Listing restaurants is never allowed, so
+// the key itself is the secret. Staff roles and permissions are enforced inside the app.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function validKey(key) {
+      return key.size() == 32 && key.matches('^[A-HJ-NP-Z2-9]+$');
+    }
+
+    match /restaurants/{key} {
+      allow get: if signedIn() && validKey(key);
+      allow list: if false;
+      allow create: if signedIn() && validKey(key)
+        && request.resource.data.keys().hasOnly(['name', 'createdAt', 'createdBy']);
+      allow update, delete: if false;
+
+      match /{collectionName}/{docId} {
+        allow read, write: if signedIn() && validKey(key)
+          && exists(/databases/$(database)/documents/restaurants/$(key))
+          && collectionName in [
+            'users', 'branches', 'products', 'tables', 'orders', 'shifts', 'expenses',
+            'customers', 'movements', 'auditLogs', 'notifications', 'meta', 'images'
+          ];
+      }
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

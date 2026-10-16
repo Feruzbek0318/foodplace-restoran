@@ -13,7 +13,8 @@
     "build:windows": "npm run build && rm -rf \"desktop/app\" && cp -r dist \"desktop/app\" && cd desktop && npm run build:windows",
     "build:mac": "npm run build && rm -rf \"desktop/app\" && cp -r dist \"desktop/app\" && cd desktop && npm run build:mac",
     "build:android": "npm run build && npx cap sync android && cd android && ./gradlew assembleRelease",
-    "test": "vitest run"
+    "test": "vitest run",
+    "emulators": "firebase emulators:start --only firestore,auth --project demo-foodplace"
   },
   "dependencies": {
     "@capacitor/android": "^8.5.3",
@@ -21,6 +22,7 @@
     "@tailwindcss/vite": "^4.3.3",
     "@types/qrcode": "^1.5.5",
     "@vitejs/plugin-react": "^6.1.1",
+    "firebase": "^12.4.0",
     "framer-motion": "^13.4.4",
     "localforage": "^1.10.0",
     "lucide-react": "^0.546.0",
@@ -38,6 +40,7 @@
     "@types/react-dom": "^19.3.0",
     "electron": "^44.4.5",
     "electron-builder": "^26.15.3",
+    "firebase-tools": "^14.24.0",
     "tailwindcss": "^4.3.3",
     "typescript": "^7.0.2",
     "vitest": "^3.2.4"
