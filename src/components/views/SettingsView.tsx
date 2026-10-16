@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { User, Building2, MapPin, Globe, Moon, Bell, Shield, Monitor, Save, Camera, CheckCircle2, AlertCircle } from 'lucide-react';
+import { User, Building2, MapPin, Globe, Moon, Bell, Shield, Monitor, Save, Camera, CheckCircle2, AlertCircle, Cloud } from 'lucide-react';
+import { CloudSettings } from './CloudSettings';
 import { store } from '../../services/store';
 import { useTranslation } from '../../hooks/useTranslation';
-import { trMessage } from '../../locales';
+import { tr, trMessage } from '../../locales';
 import { AsyncImage } from '../common/AsyncImage';
 import { BranchesView } from './BranchesView';
 import { uploadImage } from '../../utils/storage';
@@ -127,6 +128,7 @@ export const SettingsView: React.FC = () => {
     { id: 'appearance', icon: Moon, label: t('appearance') },
     { id: 'notifications', icon: Bell, label: t('notifications') },
     { id: 'security', icon: Shield, label: t('security') },
+    { id: 'cloud', icon: Cloud, label: tr('Bulut') },
     { id: 'system', icon: Monitor, label: t('system') },
   ];
 
@@ -370,6 +372,8 @@ export const SettingsView: React.FC = () => {
                 </button>
               </div>
             )}
+
+            {activeTab === 'cloud' && <CloudSettings />}
 
             {activeTab === 'system' && (
               <div className="space-y-6 max-w-lg">

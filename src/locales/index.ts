@@ -454,6 +454,7 @@ const ACTION_LABELS: Record<string, string> = {
   USER_UPDATE: "Parol o'zgartirildi",
   USER_UPDATED: "Xodim yangilandi",
   INVENTORY_UPDATE: "Ombor harakati",
+  CLOUD_CONNECTED: "Bulutga ulandi",
 };
 
 export const actionLabel = (action?: string) => (action ? tr(ACTION_LABELS[action] || action) : '');

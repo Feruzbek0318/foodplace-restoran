@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Menu, Search, Bell, Moon, Sun, User, Settings as SettingsIcon, LogOut } from 'lucide-react';
+import { Menu, Search, Bell, Moon, Sun, User, Settings as SettingsIcon, LogOut, Cloud, CloudOff } from 'lucide-react';
+import { useCloudState } from '../../hooks/useCloudState';
 import { store } from '../../services/store';
 import { useTranslation } from '../../hooks/useTranslation';
 import { AsyncImage } from './AsyncImage';
@@ -17,6 +18,13 @@ interface Props {
   onToggleMobileMenu: () => void;
 }
 
+const CLOUD_TITLES: Record<string, string> = {
+  online: 'Bulut: onlayn',
+  offline: 'Bulut: internet yo‘q, o‘zgarishlar navbatda',
+  connecting: 'Bulut: ulanmoqda',
+  error: 'Bulut: xatolik',
+};
+
 export const Header: React.FC<Props> = ({
   currentView,
   onNavigate,
@@ -28,6 +36,7 @@ export const Header: React.FC<Props> = ({
   onToggleMobileMenu
 }) => {
   const { t } = useTranslation();
+  const cloud = useCloudState();
   const user = store.currentUser;
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
@@ -49,6 +58,18 @@ export const Header: React.FC<Props> = ({
       </div>
 
       <div className="flex items-center gap-3">
+        {/* Cloud sync status (only when this restaurant is connected) */}
+        {cloud.key && (
+          <span
+            data-testid="cloud-status"
+            data-status={cloud.status}
+            title={tr(CLOUD_TITLES[cloud.status] || 'Bulut')}
+            className={`p-2 rounded-xl ${cloud.status === 'online' ? 'text-emerald-500' : cloud.status === 'error' ? 'text-rose-500' : 'text-amber-500'}`}
+          >
+            {cloud.status === 'online' || cloud.status === 'connecting' ? <Cloud className="w-5 h-5" /> : <CloudOff className="w-5 h-5" />}
+          </span>
+        )}
+
         {/* Notifications */}
         <button 
           onClick={onToggleNotifications}

@@ -1,8 +1,11 @@
 import React, { useRef, useState } from 'react';
-import { ChefHat, Store, LogIn, Upload, ArrowLeft, ShieldCheck, AlertCircle, Loader2 } from 'lucide-react';
+import { ChefHat, Store, LogIn, Upload, ArrowLeft, ShieldCheck, AlertCircle, Loader2, KeyRound } from 'lucide-react';
 import { tr, trMessage } from '../../locales';
 import { LanguageSwitcher } from '../common/LanguageSwitcher';
-import { readBackupFile, restoreBackup } from '../../services/backup';
+import { readBackupFile, replaceLocalData, restoreBackup } from '../../services/backup';
+import { downloadCloudRestaurant, rememberRestaurantKey } from '../../services/cloudSync';
+import { isCloudConfigured } from '../../services/firebase';
+import { normalizeRestaurantKey } from '../../services/syncDiff';
 
 interface Props {
   onCreateNew: () => void;
@@ -15,6 +18,28 @@ export const WelcomeView: React.FC<Props> = ({ onCreateNew }) => {
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+  const [keyInput, setKeyInput] = useState('');
+
+  // Joins a restaurant that is already in the cloud: download its data, then sign in as staff
+  const handleJoin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const key = normalizeRestaurantKey(keyInput);
+    if (!key) {
+      setError(tr('Kalit noto‘g‘ri: 32 ta belgi bo‘lishi kerak'));
+      return;
+    }
+    setError('');
+    setBusy(true);
+    try {
+      const data = await downloadCloudRestaurant(key);
+      replaceLocalData(data);
+      rememberRestaurantKey(key);
+      window.location.reload();
+    } catch (err) {
+      setError(trMessage(err instanceof Error ? err.message : String(err)));
+      setBusy(false);
+    }
+  };
 
   const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -78,6 +103,37 @@ export const WelcomeView: React.FC<Props> = ({ onCreateNew }) => {
               <ArrowLeft className="w-4 h-4" /> {tr('Orqaga')}
             </button>
             <h2 className="text-xl font-bold">{tr('Mavjud akkaunt bilan kirish')}</h2>
+
+            {isCloudConfigured() && (
+              <form onSubmit={handleJoin} className="mt-4 space-y-3">
+                <label className="flex items-center gap-2 text-sm font-semibold text-slate-200">
+                  <KeyRound className="w-4 h-4 text-blue-400" /> {tr('Restoran kaliti bilan ulanish')}
+                </label>
+                <input
+                  value={keyInput}
+                  onChange={e => setKeyInput(e.target.value)}
+                  placeholder="XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX"
+                  autoComplete="off"
+                  spellCheck={false}
+                  className="w-full px-4 py-3 rounded-2xl bg-slate-900/70 border border-white/10 font-mono text-sm tracking-wide uppercase placeholder:text-slate-600 focus:border-blue-500 outline-none"
+                />
+                <button
+                  type="submit"
+                  disabled={busy || !keyInput.trim()}
+                  className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl bg-blue-600 hover:bg-blue-700 disabled:opacity-60 font-bold transition"
+                >
+                  {busy ? <Loader2 className="w-5 h-5 animate-spin" /> : <LogIn className="w-5 h-5" />}
+                  {busy ? tr('Ulanmoqda...') : tr('Ulanish')}
+                </button>
+                <p className="text-xs text-slate-500">{tr('Kalitni restoran egasi Sozlamalar → Bulut bo‘limidan oladi. Ulangach barcha o‘zgarishlar shu qurilmada real vaqtda ko‘rinadi.')}</p>
+              </form>
+            )}
+
+            {isCloudConfigured() && (
+              <div className="my-5 flex items-center gap-3 text-xs text-slate-500">
+                <div className="h-px flex-1 bg-white/10" /> {tr('yoki zaxira fayldan')} <div className="h-px flex-1 bg-white/10" />
+              </div>
+            )}
             <p className="text-sm text-slate-400 mt-2 leading-relaxed">
               {tr('Bu qurilmada hali restoran ma’lumotlari yo‘q. Boshqa qurilmada Sozlamalar → Tizim → “Zaxira nusxa yuklab olish” orqali olingan faylni tanlang — barcha xodimlar, mahsulotlar va buyurtmalar tiklanadi, so‘ng o‘z login va parolingiz bilan kirasiz.')}
             </p>
