@@ -7,7 +7,7 @@
 
 Restoran va kafe uchun boshqaruv paneli: kassa (POS), oshxona ekrani (KDS), stollar xaritasi, mahsulotlar va omborxona, xarajatlar, moliya hisoboti, mijozlar, xodimlar, kassa smenalari va audit jurnali. Interfeys o'zbek, rus va ingliz tillarida.
 
-> **Demo / offline rejim.** Server yo'q: barcha ma'lumotlar shu qurilmaning brauzerida (`localStorage`) saqlanadi. Bir nechta kassa yoki qurilma o'rtasida sinxronizatsiya yo'q. Muntazam zaxira nusxa oling — batafsil [Cheklovlar](#cheklovlar) bo'limida.
+> **Ikki rejim.** Firebase sozlanmagan bo'lsa, ilova oflayn ishlaydi: ma'lumotlar shu qurilma brauzerida saqlanadi. Firebase ulansa ([Bulut sinxronizatsiya](#bulut-sinxronizatsiya)), barcha qurilmalar — kassa, oshxona planshet, ofitsiant — bitta ma'lumot bilan real vaqtda ishlaydi. Batafsil: [Cheklovlar](#cheklovlar).
 
 **Jonli demo:** https://feruzbek0318.github.io/foodplace-restoran/ — har bir tashrif buyuruvchining ma'lumotlari faqat o'z brauzerida saqlanadi.
 
@@ -86,17 +86,64 @@ Doimiy mijozlar telefon raqami bilan saqlanadi; ularning buyurtmalar soni va umu
 
 Shuningdek: **Xodimlar** (rollar va ruxsatlar), **Smenalar** (Z-hisobot, kassadagi naqd pul nazorati), **Tizim jurnali** (kim, qachon, nima qilgani), **Sozlamalar** (til, valyuta, soliq, mavzu, zaxira nusxa).
 
+## Bulut sinxronizatsiya
+
+Firebase (Google'ning bepul Firestore bazasi) ulansa:
+
+- kassada berilgan buyurtma oshxona ekranida **1 soniyadan kam vaqtda** paydo bo'ladi, oshpaz "Qabul qilish"ni bossa kassada holat darhol o'zgaradi;
+- xodim, mahsulot, narx, stol, ombor, smena va sozlamalardagi har bir o'zgarish barcha qurilmalarga yetib boradi;
+- admin xodimni bloklasa yoki huquqini o'zgartirsa, u boshqa qurilmada darhol qo'llanadi (bloklangan xodim tizimdan chiqariladi);
+- internet uzilsa ilova ishlashda davom etadi, o'zgarishlar navbatda turadi va ulanganda yuboriladi;
+- ma'lumotlar Google serverida saqlanadi — brauzer tozalansa ham yo'qolmaydi.
+
+**Ishlatish:**
+1. Egasi (Super Admin): **Sozlamalar → Bulut → Bulutga ulash**. Shu qurilmadagi barcha ma'lumotlar bulutga yuklanadi va 32 belgili **restoran kaliti** chiqadi.
+2. Yangi qurilmada: **Xush kelibsiz → Menda akkaunt bor → Restoran kaliti bilan ulanish** → kalitni kiriting → xodim o'z login va paroli bilan kiradi.
+3. Yuqori o'ngdagi bulut belgisi holatni ko'rsatadi: yashil — onlayn, sariq — internet yo'q, qizil — xato.
+
+### Firebase'ni sozlash (bir marta, ~5 daqiqa, bepul)
+
+1. https://console.firebase.google.com → **Add project** (Google Analytics shart emas).
+2. **Build → Firestore Database → Create database** → joylashuv: `eur3` yoki yaqin region → **production mode**.
+3. **Build → Authentication → Get started → Sign-in method → Anonymous → Enable**.
+4. **Project settings → General → Your apps → Web (`</>`)** → ilovani ro'yxatdan o'tkazing va `firebaseConfig` qiymatlarini oling.
+5. Loyiha papkasida `.env.example` dan nusxa olib `.env.local` yarating va to'ldiring:
+   ```bash
+   VITE_FIREBASE_API_KEY=...
+   VITE_FIREBASE_AUTH_DOMAIN=...firebaseapp.com
+   VITE_FIREBASE_PROJECT_ID=...
+   VITE_FIREBASE_APP_ID=...
+   ```
+6. Xavfsizlik qoidalarini yuklang:
+   ```bash
+   npx firebase login
+   npx firebase deploy --only firestore:rules --project <PROJECT_ID>
+   ```
+7. **Authentication → Settings → Authorized domains** ga saytingiz domenini qo'shing (masalan, `feruzbek0318.github.io`).
+8. `npm run build` qilib qayta joylang. Firebase web sozlamalari ochiq bo'lishi mumkin — kirish `firestore.rules` bilan himoyalangan.
+
+Bepul (Spark) tarifi limiti: kuniga 50 000 o'qish, 20 000 yozish, 1 GB joy — bitta restoran uchun odatda yetarli.
+
+**Lokal sinov (internetsiz, haqiqiy loyihasiz):** Java 21+ kerak.
+```bash
+npm run emulators          # Firestore + Auth emulyatori
+# .env.local: VITE_FIREBASE_PROJECT_ID=demo-foodplace va VITE_FIREBASE_EMULATOR=true
+npm run dev
+```
+Ikki qurilmani `http://localhost:3000` va `http://127.0.0.1:3000` da ochib sinash mumkin (ularning brauzer xotirasi alohida).
+
 ## Cheklovlar
 
 Bu loyiha hozircha bitta qurilmada ishlaydigan, serversiz ilova. Haqiqiy restoranda ishlatishdan oldin quyidagilarni bilish kerak:
 
-- **Ma'lumotlar brauzerda.** Brauzer ma'lumotlari tozalansa yoki qurilma almashsa, hammasi yo'qoladi. Himoya: **Sozlamalar → Tizim → Zaxira nusxa yuklab olish** (faylni boshqa joyda saqlang).
-- **Sinxronizatsiya yo'q.** Har bir qurilma (kassa, oshxona planshet) o'z ma'lumotlari bilan ishlaydi.
-- **Xavfsizlik brauzer darajasida.** Parollar PBKDF2 (tuz bilan) xeshlangan, rollar va ruxsatlar ilova ichida tekshiriladi. Ammo qurilmaga kira olgan va DevTools'dan foydalana oladigan odam ma'lumotlarni, jumladan tizim jurnalini, o'zgartira oladi. Haqiqiy himoya uchun server kerak.
+- **Bulutsiz rejimda ma'lumotlar faqat brauzerda.** Brauzer tozalansa yoki qurilma almashsa, hammasi yo'qoladi. Himoya: bulutga ulash yoki **Sozlamalar → Tizim → Zaxira nusxa yuklab olish**.
+- **Restoran kaliti — bu kirish kaliti.** Firestore qoidalari kalitsiz hech kimga restoranni ko'rsatmaydi, lekin kalitni bilgan qurilma barcha ma'lumotlarni (xodimlar parol xeshlari bilan) o'qiy va yoza oladi. Kalitni faqat ishonchli xodimlarga bering.
+- **Rollar ilova ichida tekshiriladi.** Kassir/oshpaz cheklovlari ilova interfeysi va mantiqida ishlaydi; kalitga ega va DevTools'dan foydalana oladigan odam ularni chetlab o'tishi mumkin. To'liq server tomonidagi rol tekshiruvi uchun har bir xodimni Firebase Authentication'da alohida foydalanuvchi qilish kerak (rejada).
+- **Bir vaqtdagi tahrir.** Ikki qurilma bir yozuvni (masalan, bitta buyurtmani) aynan bir vaqtda o'zgartirsa, oxirgisi saqlanadi. Ombor qoldig'i ham shu tarzda — bir nechta kassa bir mahsulotni bir soniyada sotsa, qoldiq farq qilishi mumkin.
 - **To'lov tizimlari** (Click, Payme, Uzum) ulanmagan — faqat to'lov usuli belgisi.
 - **Desktop ilovalar imzolanmagan** (Windows SmartScreen va macOS Gatekeeper ogohlantiradi).
 
-Rejada: ma'lumotlarni serverga (masalan, Supabase) ko'chirish va qurilmalar o'rtasida sinxronizatsiya.
+Rejada: har bir xodim uchun alohida Firebase akkaunti va server tomonidagi rol tekshiruvi, ombor qoldig'ini tranzaksiya bilan kamaytirish.
 
 ## Ishga tushirish
 
@@ -116,7 +163,8 @@ So'ng brauzerda http://localhost:3000 ni oching. Birinchi ochilishda admin akkau
 | `npm run dev` | Ishlab chiqish serveri (port 3000) |
 | `npm run build` | `dist/` ga production build |
 | `npm run lint` | TypeScript tekshiruvi |
-| `npm test` | Hisob-kitob testlari (Vitest): chegirma, soliq, qaytim, ombor qoldig'i, smena farqi, moliya hisoboti |
+| `npm test` | Testlar (Vitest): hisob-kitoblar (chegirma, soliq, qaytim, ombor, smena, moliya) va bulut sinxronizatsiyasi (o'zgarishlarni aniqlash, restoran kaliti) |
+| `npm run emulators` | Lokal Firebase emulyatori (Firestore + Auth), Java 21+ kerak |
 | `npm run electron` | Build qilib, desktop (Electron) ilova sifatida ochadi |
 | `npm run build:windows` | Windows o'rnatuvchisi (EXE) → `desktop/installer/` |
 | `npm run build:mac` | macOS DMG (Intel + Apple Silicon) → `desktop/installer/` |
@@ -139,6 +187,8 @@ cd dist && touch .nojekyll && git init -b gh-pages && git add -A && git commit -
 - `src/utils/calc.ts` — sof hisob-kitob funksiyalari (testlari: `calc.test.ts`)
 - `src/utils/permissions.ts` — rollar, ruxsatlar va qaysi bo'lim kimga ko'rinishi
 - `src/services/backup.ts` — zaxira nusxa olish va tiklash
+- `src/services/cloudSync.ts` — bulut sinxronizatsiya: ulash, kalit bilan qo'shilish, real vaqt tinglash; `syncDiff.ts` — o'zgarishlarni aniqlash (testlari bilan)
+- `src/services/firebase.ts` — Firebase ulanishi (`.env.local` dan), `firestore.rules` — server tomonidagi kirish qoidalari
 - `src/components/views/` — har bir bo'lim sahifasi
 - `src/locales/` — tarjimalar: `index.ts` (kalitlar, `tr()`), `phrases.ts` (iboralar), `dynamic.ts` (jurnal/bildirishnoma qoliplari)
 - `desktop/` — Electron qobig'i: Windows va macOS o'rnatuvchi sozlamalari
