@@ -12,7 +12,8 @@
     "electron": "npm run build && rm -rf \"desktop/app\" && cp -r dist \"desktop/app\" && electron desktop",
     "build:windows": "npm run build && rm -rf \"desktop/app\" && cp -r dist \"desktop/app\" && cd desktop && npm run build:windows",
     "build:mac": "npm run build && rm -rf \"desktop/app\" && cp -r dist \"desktop/app\" && cd desktop && npm run build:mac",
-    "build:android": "npm run build && npx cap sync android && cd android && ./gradlew assembleRelease"
+    "build:android": "npm run build && npx cap sync android && cd android && ./gradlew assembleRelease",
+    "test": "vitest run"
   },
   "dependencies": {
     "@capacitor/android": "^8.5.3",
@@ -38,6 +39,7 @@
     "electron": "^44.4.5",
     "electron-builder": "^26.15.3",
     "tailwindcss": "^4.3.3",
-    "typescript": "^7.0.2"
+    "typescript": "^7.0.2",
+    "vitest": "^3.2.4"
   }
 }
