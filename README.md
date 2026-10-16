@@ -2,9 +2,12 @@
 
 # FoodPlace — Restoran boshqaruv tizimi
 
+[![CI](https://github.com/Feruzbek0318/foodplace-restoran/actions/workflows/ci.yml/badge.svg)](https://github.com/Feruzbek0318/foodplace-restoran/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 Restoran va kafe uchun boshqaruv paneli: kassa (POS), oshxona ekrani (KDS), stollar xaritasi, mahsulotlar va omborxona, xarajatlar, moliya hisoboti, mijozlar, xodimlar, kassa smenalari va audit jurnali. Interfeys o'zbek, rus va ingliz tillarida.
 
-Ma'lumotlar brauzerning `localStorage` xotirasida saqlanadi (server yoki ma'lumotlar bazasi talab qilinmaydi).
+> **Demo / offline rejim.** Server yo'q: barcha ma'lumotlar shu qurilmaning brauzerida (`localStorage`) saqlanadi. Bir nechta kassa yoki qurilma o'rtasida sinxronizatsiya yo'q. Muntazam zaxira nusxa oling — batafsil [Cheklovlar](#cheklovlar) bo'limida.
 
 **Jonli demo:** https://feruzbek0318.github.io/foodplace-restoran/ — har bir tashrif buyuruvchining ma'lumotlari faqat o'z brauzerida saqlanadi.
 
@@ -37,7 +40,9 @@ Tizim birinchi marta ochilganda yangi restoran ochish yoki mavjud zaxira faylida
 
 ### 2. Kassa (POS)
 
-Taomlar toifalar bo'yicha ko'rsatiladi; bosilgan taom savatga tushadi. Buyurtma turi (zalda, olib ketish, yetkazish), stol, chegirma va oshxona uchun izoh tanlanadi. To'lov naqd, karta, Click, Payme, Uzum yoki aralash usulda qabul qilinadi va chek chiqariladi. To'lov qabul qilish uchun kassa smenasi ochiq bo'lishi kerak.
+Taomlar toifalar bo'yicha ko'rsatiladi; bosilgan taom savatga tushadi. Buyurtma turi (zalda, olib ketish, yetkazish), stol, chegirma va oshxona uchun izoh tanlanadi. To'lov usuli (naqd, karta, Click, Payme, Uzum yoki aralash) tanlanadi va chek chiqariladi; chekda buyurtma raqamining skanerlanadigan Code 128 shtrix-kodi bor. To'lov qabul qilish uchun kassa smenasi ochiq bo'lishi kerak.
+
+> Click, Payme va Uzum bilan **integratsiya yo'q**: tizim to'lov usulini faqat qayd etadi (hisobot va smena uchun), pul o'tkazmasini o'zi amalga oshirmaydi.
 
 ![Kassa](docs/screenshots/04-kassa-pos.jpg)
 
@@ -79,7 +84,19 @@ Doimiy mijozlar telefon raqami bilan saqlanadi; ularning buyurtmalar soni va umu
 
 ![Mijozlar](docs/screenshots/11-mijozlar.jpg)
 
-Shuningdek: **Xodimlar** (rollar va ruxsatlar), **Smenalar** (Z-hisobot, kassadagi naqd pul nazorati), **Tizim jurnali** (o'chirib bo'lmaydigan audit log), **Sozlamalar** (til, valyuta, soliq, mavzu, zaxira nusxa).
+Shuningdek: **Xodimlar** (rollar va ruxsatlar), **Smenalar** (Z-hisobot, kassadagi naqd pul nazorati), **Tizim jurnali** (kim, qachon, nima qilgani), **Sozlamalar** (til, valyuta, soliq, mavzu, zaxira nusxa).
+
+## Cheklovlar
+
+Bu loyiha hozircha bitta qurilmada ishlaydigan, serversiz ilova. Haqiqiy restoranda ishlatishdan oldin quyidagilarni bilish kerak:
+
+- **Ma'lumotlar brauzerda.** Brauzer ma'lumotlari tozalansa yoki qurilma almashsa, hammasi yo'qoladi. Himoya: **Sozlamalar → Tizim → Zaxira nusxa yuklab olish** (faylni boshqa joyda saqlang).
+- **Sinxronizatsiya yo'q.** Har bir qurilma (kassa, oshxona planshet) o'z ma'lumotlari bilan ishlaydi.
+- **Xavfsizlik brauzer darajasida.** Parollar PBKDF2 (tuz bilan) xeshlangan, rollar va ruxsatlar ilova ichida tekshiriladi. Ammo qurilmaga kira olgan va DevTools'dan foydalana oladigan odam ma'lumotlarni, jumladan tizim jurnalini, o'zgartira oladi. Haqiqiy himoya uchun server kerak.
+- **To'lov tizimlari** (Click, Payme, Uzum) ulanmagan — faqat to'lov usuli belgisi.
+- **Desktop ilovalar imzolanmagan** (Windows SmartScreen va macOS Gatekeeper ogohlantiradi).
+
+Rejada: ma'lumotlarni serverga (masalan, Supabase) ko'chirish va qurilmalar o'rtasida sinxronizatsiya.
 
 ## Ishga tushirish
 
@@ -99,12 +116,13 @@ So'ng brauzerda http://localhost:3000 ni oching. Birinchi ochilishda admin akkau
 | `npm run dev` | Ishlab chiqish serveri (port 3000) |
 | `npm run build` | `dist/` ga production build |
 | `npm run lint` | TypeScript tekshiruvi |
+| `npm test` | Hisob-kitob testlari (Vitest): chegirma, soliq, qaytim, ombor qoldig'i, smena farqi, moliya hisoboti |
 | `npm run electron` | Build qilib, desktop (Electron) ilova sifatida ochadi |
-| `npm run build:windows` | Windows o'rnatuvchisi (EXE) → `windovs feruzbek/installer/` |
-| `npm run build:mac` | macOS DMG (Intel + Apple Silicon) → `windovs feruzbek/installer/` |
+| `npm run build:windows` | Windows o'rnatuvchisi (EXE) → `desktop/installer/` |
+| `npm run build:mac` | macOS DMG (Intel + Apple Silicon) → `desktop/installer/` |
 | `npm run build:android` | Android APK (Capacitor) → `android/app/build/outputs/apk/release/` |
 
-Windows va macOS fayllari macOS kompyuterda ham yig'iladi (electron-builder). Android uchun Android SDK va JDK 17+ kerak (`JAVA_HOME`, `ANDROID_HOME`). Ilova belgisi manbasi: `windovs feruzbek/assets/src/icon.html`.
+Windows va macOS fayllari macOS kompyuterda ham yig'iladi (electron-builder). Android uchun Android SDK va JDK 17+ kerak (`JAVA_HOME`, `ANDROID_HOME`). Ilova belgisi manbasi: `desktop/assets/src/icon.html`.
 
 ## GitHub Pages'ga joylash
 
@@ -117,10 +135,13 @@ cd dist && touch .nojekyll && git init -b gh-pages && git add -A && git commit -
 
 ## Tuzilishi
 
-- `src/services/store.ts` — barcha ma'lumotlar va biznes mantiq (buyurtmalar, smenalar, ombor, xodimlar)
+- `src/services/store.ts` — ma'lumotlar va biznes mantiq (buyurtmalar, smenalar, ombor, xodimlar)
+- `src/utils/calc.ts` — sof hisob-kitob funksiyalari (testlari: `calc.test.ts`)
+- `src/utils/permissions.ts` — rollar, ruxsatlar va qaysi bo'lim kimga ko'rinishi
+- `src/services/backup.ts` — zaxira nusxa olish va tiklash
 - `src/components/views/` — har bir bo'lim sahifasi
 - `src/locales/` — tarjimalar: `index.ts` (kalitlar, `tr()`), `phrases.ts` (iboralar), `dynamic.ts` (jurnal/bildirishnoma qoliplari)
-- `windovs feruzbek/` — Electron qobig'i: Windows va macOS o'rnatuvchi sozlamalari
+- `desktop/` — Electron qobig'i: Windows va macOS o'rnatuvchi sozlamalari
 - `android/` — Capacitor orqali Android ilova (`capacitor.config.ts`)
 
 ## Banner
@@ -130,3 +151,11 @@ cd dist && touch .nojekyll && git init -b gh-pages && git add -A && git commit -
 ```bash
 "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --hide-scrollbars --allow-file-access-from-files --virtual-time-budget=4000 --window-size=1280,640 --screenshot=docs/social-preview.png "file://$PWD/docs/banner/banner.html"
 ```
+
+## CI
+
+Har bir push va pull request'da GitHub Actions TypeScript tekshiruvi, testlar va build'ni ishga tushiradi ([.github/workflows/ci.yml](.github/workflows/ci.yml)).
+
+## Litsenziya
+
+[MIT](LICENSE)
