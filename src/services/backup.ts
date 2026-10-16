@@ -1,6 +1,7 @@
 import localforage from 'localforage';
 // Applies the shared localforage config (database/store names) used for uploaded images
 import '../utils/storage';
+import { disconnectThisDevice } from './cloudSync';
 
 // Full backup of everything the app keeps in this browser: the store (localStorage keys
 // with our prefix) and uploaded images (IndexedDB via localforage).
@@ -63,15 +64,22 @@ export function validateBackup(parsed: unknown): string | null {
   return null;
 }
 
-/** Replaces all local data with the backup. The caller reloads the page afterwards. */
-export async function restoreBackup(backup: BackupFile) {
+/** Replaces the app data stored in this browser (not images). The caller reloads afterwards. */
+export function replaceLocalData(data: Record<string, unknown>) {
   Object.keys(localStorage)
     .filter(k => k.startsWith(PREFIX))
     .forEach(k => localStorage.removeItem(k));
   sessionStorage.removeItem(PREFIX + 'currentUser');
-  for (const [key, value] of Object.entries(backup.data)) {
+  for (const [key, value] of Object.entries(data)) {
     if (!SKIP_KEYS.has(key)) localStorage.setItem(PREFIX + key, JSON.stringify(value));
   }
+}
+
+/** Replaces all local data with the backup. The caller reloads the page afterwards. */
+export async function restoreBackup(backup: BackupFile) {
+  // A restored backup is a separate copy: stop syncing so the cloud does not overwrite it
+  disconnectThisDevice();
+  replaceLocalData(backup.data);
   await localforage.clear();
   for (const [key, value] of Object.entries(backup.images || {})) {
     await localforage.setItem(key, value);

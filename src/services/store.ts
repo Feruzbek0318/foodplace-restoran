@@ -1,5 +1,5 @@
 import { applyStockMovement, shiftDifference } from '../utils/calc';
-import { StorageAdapter } from './storageAdapter';
+import { deviceId, disconnectThisDevice, isCloudActive, pushChange, startSync, type SyncKey } from './cloudSync';
 import {
   User,
   RestaurantTable,
@@ -87,7 +87,8 @@ function loadFromStorage<T>(key: string, defaultValue: T): T {
 function saveToStorage<T>(key: string, value: T) {
   try {
     localStorage.setItem(STORAGE_PREFIX + key, JSON.stringify(value));
-    StorageAdapter.save(key, value).catch(console.error);
+    // Mirror to the cloud when this restaurant is connected (other devices see it in real time)
+    pushChange(key, value);
   } catch {
     // fallback
   }
@@ -195,9 +196,6 @@ class Store {
     } else {
       sessionStorage.setItem(STORAGE_PREFIX + 'currentUser', JSON.stringify(user));
       localStorage.removeItem(STORAGE_PREFIX + 'currentUser');
-      import('./storageAdapter').then(({ StorageAdapter }) => {
-         StorageAdapter.remove('currentUser').catch(console.error);
-      });
     }
     saveToStorage('users', this.users);
 
@@ -276,7 +274,9 @@ class Store {
   createOrder(orderData: Partial<Order>): Order {
     // Next number after the highest existing one, so receipt barcodes stay unique even if orders are removed
     const orderNumber = this.orders.reduce((max, o) => Math.max(max, o.orderNumber || Number(o.id.split('-').pop()) || 0), 0) + 1;
-    const orderId = `ORD-${new Date().getFullYear()}-${String(orderNumber).padStart(6, '0')}`;
+    // With several synced devices a per-device suffix keeps ids unique even if two tills
+    // pick the same next number at the same moment
+    const orderId = `ORD-${new Date().getFullYear()}-${String(orderNumber).padStart(6, '0')}${isCloudActive() ? `-${deviceId()}` : ''}`;
     
     const newOrder: Order = {
       id: orderId,
@@ -931,8 +931,28 @@ class Store {
     }
   }
 
+  /** Applies a change that arrived from another device (cloud sync). Never pushes back. */
+  applyRemote(key: SyncKey, value: unknown) {
+    const prop = (key === 'movements' ? 'inventoryMovements' : key) as keyof this;
+    const next = key === 'settings' ? { ...this.settings, ...(value as object) } : value;
+    if (JSON.stringify(this[prop]) === JSON.stringify(next)) return;
+    (this as Record<string, unknown>)[prop as string] = next;
+    localStorage.setItem(STORAGE_PREFIX + key, JSON.stringify(next));
+    if (key === 'users' && this.currentUser) {
+      // Role, permission or block changes made on another device apply here immediately
+      const fresh = this.users.find(u => u.id === this.currentUser!.id);
+      if (!fresh || fresh.status === 'BLOCKED') {
+        this.logout();
+        return;
+      }
+      this.currentUser = fresh;
+    }
+    this.notify();
+  }
+
   // Reset demo state
   resetAllDemoData() {
+    disconnectThisDevice();
     localStorage.clear();
     this.currentUser = null;
     this.activeBranchId = 'branch-1';
@@ -953,3 +973,8 @@ class Store {
 }
 
 export const store = new Store();
+
+// Connected restaurants start listening for changes from other devices right away
+if (isCloudActive()) {
+  startSync((key, value) => store.applyRemote(key, value));
+}

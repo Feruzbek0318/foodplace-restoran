@@ -1,4 +1,5 @@
 import localforage from 'localforage';
+import { fetchImage, pushImage } from '../services/cloudSync';
 
 localforage.config({
   name: 'RestaurantApp',
@@ -42,6 +43,7 @@ export async function uploadImage(file: File): Promise<string> {
         const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
         const id = 'img_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
         await localforage.setItem(id, dataUrl);
+        pushImage(id, dataUrl);
         resolve(id);
       };
       img.onerror = () => reject(new Error('Rasmni yuklashda xatolik yuz berdi'));
@@ -60,7 +62,11 @@ export async function getImageUrl(id: string): Promise<string | null> {
   if (id.startsWith('http') || id.startsWith('data:')) return id; // Fallback for old static urls
   try {
     const data = await localforage.getItem<string>(id);
-    return data;
+    if (data) return data;
+    // Uploaded on another device: fetch it from the cloud once and cache it here
+    const remote = await fetchImage(id);
+    if (remote) await localforage.setItem(id, remote);
+    return remote;
   } catch (error) {
     console.error('Rasmni o‘qishda xatolik:', error);
     return null;
