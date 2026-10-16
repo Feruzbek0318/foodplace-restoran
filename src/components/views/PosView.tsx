@@ -468,16 +468,16 @@ export const PosView: React.FC<PosViewProps> = ({ onOrderCreated, onNavigateToSh
                 {(subtotal || 0).toLocaleString()} UZS
               </span>
             </div>
-            {taxAmount > 0 && (
-              <div className="flex justify-between text-xs text-slate-500">
-                <span>{tr("QQS / Xizmat (")}{taxRate}%):</span>
-                <span>+{taxAmount.toLocaleString()} UZS</span>
-              </div>
-            )}
             {discountAmount > 0 && (
               <div className="flex justify-between text-emerald-600 font-semibold">
                 <span>{tr("Chegirma (")}{discountPercent}%):</span>
                 <span>-{(discountAmount || 0).toLocaleString()} UZS</span>
+              </div>
+            )}
+            {taxAmount > 0 && (
+              <div className="flex justify-between text-xs text-slate-500">
+                <span>{tr("QQS / Xizmat (")}{taxRate}%):</span>
+                <span>+{taxAmount.toLocaleString()} UZS</span>
               </div>
             )}
             <div className="flex justify-between text-base font-black text-slate-900 dark:text-white pt-1.5 border-t border-slate-200 dark:border-slate-700">
