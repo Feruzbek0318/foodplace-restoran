@@ -1,0 +1,6 @@
+{
+  "name": "FoodPlace - Restoran Boshqaruv Tizimi",
+  "description": "Professional darajadagi avtomatlashtirilgan restoran va kafe boshqaruv platformasi: POS kassa, oshxona (KDS), stollar xaritasi, ombor, moliya va xodimlar boshqaruvi.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+dist-ssr/
+release/
+*.local
+
+# Windows (Electron) desktop build output
+windovs feruzbek/node_modules/
+windovs feruzbek/installer/
+windovs feruzbek/app/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Local Claude Code config (contains local test account credentials)
+.claude/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.swp

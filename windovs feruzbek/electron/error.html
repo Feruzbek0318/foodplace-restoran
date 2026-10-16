@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <title>Xatolik - FoodPlace Restaurant</title>
+  <style>
+    body { font-family: -apple-system, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background: #f8fafc; color: #0f172a; text-align: center; margin:0; }
+    .icon { width: 80px; height: 80px; background: #fee2e2; color: #ef4444; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 40px; margin-bottom: 24px; }
+    h1 { margin-bottom: 8px; }
+    p { color: #64748b; margin-bottom: 32px; max-width: 400px; }
+    .btn { background: #0284c7; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 16px; cursor: pointer; font-weight: 600; margin: 0 8px; }
+    .btn:hover { background: #0369a1; }
+    .btn-outline { background: transparent; color: #475569; border: 1px solid #cbd5e1; }
+    .btn-outline:hover { background: #f1f5f9; }
+  </style>
+</head>
+<body>
+  <div class="icon">!</div>
+  <h1>Tizimda muammo yuz berdi</h1>
+  <p>FoodPlace Restaurant ishga tushirishda kutilmagan xatolik yuzaga keldi. Iltimos, qayta urinib ko'ring yoki qo'llab-quvvatlash xizmatiga murojaat qiling.</p>
+  <div>
+    <button class="btn" onclick="window.electronAPI.reloadApp()">Qayta urinish</button>
+    <button class="btn btn-outline" onclick="window.electronAPI.quitApp()">Chiqish</button>
+  </div>
+</body>
+</html>

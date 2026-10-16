@@ -1,0 +1,38 @@
+{
+  "name": "foodplace-restaurant",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port=3000 --host=0.0.0.0",
+    "build": "vite build",
+    "preview": "vite preview",
+    "clean": "rm -rf dist server.js",
+    "lint": "tsc --noEmit",
+    "electron": "npm run build && rm -rf \"windovs feruzbek/app\" && cp -r dist \"windovs feruzbek/app\" && electron \"windovs feruzbek\"",
+    "build:windows": "npm run build && rm -rf \"windovs feruzbek/app\" && cp -r dist \"windovs feruzbek/app\" && cd \"windovs feruzbek\" && npm run build:windows"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/qrcode": "^1.5.5",
+    "@vitejs/plugin-react": "^6.1.1",
+    "framer-motion": "^13.4.4",
+    "localforage": "^1.10.0",
+    "lucide-react": "^0.546.0",
+    "qrcode": "^1.5.4",
+    "react": "^19.0.1",
+    "react-dom": "^19.0.1",
+    "react-is": "^19.3.0",
+    "recharts": "^3.10.1",
+    "vite": "^8.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "electron": "^44.4.5",
+    "electron-builder": "^26.15.3",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^7.0.2"
+  }
+}
