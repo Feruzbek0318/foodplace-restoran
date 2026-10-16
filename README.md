@@ -1,3 +1,5 @@
+![FoodPlace — restoran boshqaruv tizimi](docs/banner.jpg)
+
 # FoodPlace — Restoran boshqaruv tizimi
 
 Restoran va kafe uchun boshqaruv paneli: kassa (POS), oshxona ekrani (KDS), stollar xaritasi, mahsulotlar va omborxona, xarajatlar, moliya hisoboti, mijozlar, xodimlar, kassa smenalari va audit jurnali. Interfeys o'zbek, rus va ingliz tillarida.
@@ -102,3 +104,11 @@ cd dist && touch .nojekyll && git init -b gh-pages && git add -A && git commit -
 - `src/components/views/` — har bir bo'lim sahifasi
 - `src/locales/` — tarjimalar: `index.ts` (kalitlar, `tr()`), `phrases.ts` (iboralar), `dynamic.ts` (jurnal/bildirishnoma qoliplari)
 - `windovs feruzbek/` — Electron qobig'i va Windows o'rnatuvchi sozlamalari
+
+## Banner
+
+`docs/banner.jpg` (README) va `docs/social-preview.png` (GitHub Social preview, 1280×640) [docs/banner/banner.html](docs/banner/banner.html) faylidan yasalgan. Ekran rasmlari yangilansa, qayta suratga oling:
+
+```bash
+"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --hide-scrollbars --allow-file-access-from-files --virtual-time-budget=4000 --window-size=1280,640 --screenshot=docs/social-preview.png "file://$PWD/docs/banner/banner.html"
+```
