@@ -17,9 +17,9 @@ Tayyor ilovalar [Releases](https://github.com/Feruzbek0318/foodplace-restoran/re
 
 | Platforma | Fayl | O'rnatish |
 |---|---|---|
-| Windows 10/11 (64-bit) | `FoodPlace-1.0.0-windows-setup.exe` | O'rnatuvchini ishga tushiring. SmartScreen chiqsa: **Batafsil → Baribir ishga tushirish** (ilova imzolanmagan). |
-| macOS 11+ (Intel va Apple Silicon) | `FoodPlace-1.0.0-macos.dmg` | DMG'ni oching va FoodPlace'ni **Applications** papkasiga torting. Birinchi marta: o'ng tugma bilan bosib **Open** tanlang. |
-| Android 7.0+ | `FoodPlace-1.0.0-android.apk` | Telefon yoki planshetga yuklab oching; "Noma'lum manbalardan o'rnatish"ga ruxsat bering. |
+| Windows 10/11 (64-bit) | `FoodPlace-1.1.0-windows-setup.exe` | O'rnatuvchini ishga tushiring. SmartScreen chiqsa: **Batafsil → Baribir ishga tushirish** (ilova imzolanmagan). |
+| macOS 11+ (Intel va Apple Silicon) | `FoodPlace-1.1.0-macos.dmg` | DMG'ni oching va FoodPlace'ni **Applications** papkasiga torting. Birinchi marta: o'ng tugma bilan bosib **Open** tanlang. |
+| Android 7.0+ | `FoodPlace-1.1.0-android.apk` | Telefon yoki planshetga yuklab oching; "Noma'lum manbalardan o'rnatish"ga ruxsat bering. |
 | Manba kodi | `Source code (zip / tar.gz)` | Har bir relizga GitHub avtomatik qo'shadi. |
 
 Har bir qurilmada ma'lumotlar shu qurilmaning o'zida saqlanadi. Boshqa qurilmaga o'tkazish uchun **Sozlamalar → zaxira nusxa** faylidan foydalaning.

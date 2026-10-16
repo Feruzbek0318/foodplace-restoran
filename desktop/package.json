@@ -1,7 +1,7 @@
 {
   "name": "foodplace-restaurant",
   "productName": "FoodPlace Restaurant",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "FoodPlace Restaurant Management System",
   "main": "electron/main.js",
   "scripts": {
