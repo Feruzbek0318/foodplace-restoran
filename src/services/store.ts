@@ -276,7 +276,7 @@ class Store {
   createOrder(orderData: Partial<Order>): Order {
     // Next number after the highest existing one, so receipt barcodes stay unique even if orders are removed
     const orderNumber = this.orders.reduce((max, o) => Math.max(max, o.orderNumber || Number(o.id.split('-').pop()) || 0), 0) + 1;
-    const orderId = `ORD-2026-${String(orderNumber).padStart(6, '0')}`;
+    const orderId = `ORD-${new Date().getFullYear()}-${String(orderNumber).padStart(6, '0')}`;
     
     const newOrder: Order = {
       id: orderId,
