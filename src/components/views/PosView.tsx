@@ -22,6 +22,7 @@ import { Product, OrderItem, OrderType, PaymentMethod, RestaurantTable } from '.
 import { INITIAL_CATEGORIES } from '../../data/mockData';
 import { ReceiptModal } from '../common/ReceiptModal';
 import { tr, unitLabel, zoneLabel } from '../../locales';
+import { calcOrderTotals, changeDue } from '../../utils/calc';
 
 interface PosViewProps {
   onOrderCreated?: (orderId: string) => void;
@@ -124,12 +125,9 @@ export const PosView: React.FC<PosViewProps> = ({ onOrderCreated, onNavigateToSh
   };
 
   // Calculations
-  const subtotal = cart.reduce((sum, item) => sum + item.subtotal, 0);
-  const discountAmount = Math.round((subtotal * discountPercent) / 100);
   const taxRate = store.settings.taxRatePercent || 0;
-  const taxAmount = Math.round((Math.max(0, subtotal - discountAmount) * taxRate) / 100);
-  const total = Math.max(0, subtotal - discountAmount) + taxAmount;
-  const cashChange = cashGiven > total ? cashGiven - total : 0;
+  const { subtotal, discount: discountAmount, tax: taxAmount, total } = calcOrderTotals(cart, discountPercent, taxRate);
+  const cashChange = changeDue(cashGiven, total);
 
   // Selected table info
   const selectedTable = tables.find(t => t.id === selectedTableId);

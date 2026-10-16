@@ -3,6 +3,7 @@ import { ArrowDownCircle, ArrowUpCircle, Boxes, ClipboardCheck, Search, Trash2 }
 import { store } from '../../services/store';
 import { MovementType, Product } from '../../types';
 import { tr, trMessage, unitLabel } from '../../locales';
+import { stockState as calcStockState } from '../../utils/calc';
 
 type Action = MovementType;
 
@@ -20,8 +21,7 @@ const MOVEMENT_LABELS: Record<string, string> = {
   ADJUSTMENT: 'Inventarizatsiya',
 };
 
-const stockState = (p: Product) =>
-  p.stock <= 0 ? 'out' : p.minStock > 0 && p.stock <= p.minStock ? 'low' : 'ok';
+const stockState = (p: Product) => calcStockState(p.stock, p.minStock);
 
 export const StockView: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([...store.products]);

@@ -1,3 +1,4 @@
+import { applyStockMovement, shiftDifference } from '../utils/calc';
 import { StorageAdapter } from './storageAdapter';
 import {
   User,
@@ -482,7 +483,7 @@ class Store {
     shift.closedAt = new Date().toLocaleString('uz-UZ', { hour12: false });
     shift.status = 'CLOSED';
     shift.actualCash = actualCash;
-    shift.difference = actualCash - shift.expectedCash;
+    shift.difference = shiftDifference(actualCash, shift.expectedCash);
     if (notes) shift.notes = notes;
 
     saveToStorage('shifts', this.shifts);
@@ -532,13 +533,7 @@ class Store {
     const product = this.products.find(p => p.id === movement.productId);
     if (!product) return;
 
-    if (movement.type === 'IN') {
-      product.stock += movement.quantity;
-    } else if (movement.type === 'OUT' || movement.type === 'WASTE') {
-      product.stock = Math.max(0, product.stock - movement.quantity);
-    } else if (movement.type === 'ADJUSTMENT') {
-      product.stock = movement.quantity;
-    }
+    product.stock = applyStockMovement(product.stock, movement.type, movement.quantity);
 
     const newMov: InventoryMovement = {
       id: `mov-${Date.now()}`,

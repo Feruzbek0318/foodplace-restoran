@@ -17,62 +17,11 @@ import {
 import { store } from '../../services/store';
 import { INITIAL_CATEGORIES } from '../../data/mockData';
 import { tr } from '../../locales';
-
-type DatePreset = 'TODAY' | 'WEEK' | 'MONTH' | 'YEAR';
+import { DatePreset, getPeriodStart, getPrevStart, growthPct, isRevenueOrder, orderCost, parseDate, startOfDay, summarizePeriod } from '../../utils/calc';
 
 const MONTHS_UZ = ['Yan', 'Fev', 'Mar', 'Apr', 'May', 'Iyun', 'Iyul', 'Avg', 'Sen', 'Okt', 'Noy', 'Dek'];
 
-// Store sanalarni turli formatda yozadi: "YYYY-MM-DD HH:MM:SS", ISO, yoki
-// toLocaleString('uz-UZ') natijasi "15/10/2026, 14:30:00" / "15.10.2026 14:30".
-const parseDate = (value?: string): Date | null => {
-  if (!value) return null;
-  const ymd = value.match(/^(\d{4})-(\d{1,2})-(\d{1,2})(?:[ T,]+(\d{1,2}):(\d{2})(?::(\d{2}))?)?/);
-  if (ymd) {
-    const [, y, m, d, h = '0', mi = '0', sec = '0'] = ymd;
-    return new Date(+y, +m - 1, +d, +h, +mi, +sec);
-  }
-  const dmy = value.match(/^(\d{1,2})[./](\d{1,2})[./](\d{4})(?:[ ,]+(\d{1,2}):(\d{2})(?::(\d{2}))?)?/);
-  if (dmy) {
-    let [, a, b, y, h = '0', mi = '0', sec = '0'] = dmy;
-    // uz-UZ: kun birinchi; agar ikkinchi qism 12 dan katta bo‘lsa — MM/DD formati
-    let day = +a;
-    let month = +b;
-    if (month > 12 && day <= 12) [day, month] = [month, day];
-    return new Date(+y, month - 1, day, +h, +mi, +sec);
-  }
-  const t = Date.parse(value);
-  return Number.isNaN(t) ? null : new Date(t);
-};
-
-const startOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
-
-const getPeriodStart = (preset: DatePreset, now: Date): Date => {
-  const today = startOfDay(now);
-  if (preset === 'TODAY') return today;
-  if (preset === 'WEEK') {
-    const dow = (today.getDay() + 6) % 7; // Dushanba = 0
-    return new Date(today.getFullYear(), today.getMonth(), today.getDate() - dow);
-  }
-  if (preset === 'MONTH') return new Date(now.getFullYear(), now.getMonth(), 1);
-  return new Date(now.getFullYear(), 0, 1);
-};
-
-// Oldingi davr: bir birlik orqaga surilgan, xuddi shu uzunlikdagi oraliq
-const getPrevStart = (preset: DatePreset, start: Date): Date => {
-  if (preset === 'TODAY') return new Date(start.getFullYear(), start.getMonth(), start.getDate() - 1);
-  if (preset === 'WEEK') return new Date(start.getFullYear(), start.getMonth(), start.getDate() - 7);
-  if (preset === 'MONTH') return new Date(start.getFullYear(), start.getMonth() - 1, 1);
-  return new Date(start.getFullYear() - 1, 0, 1);
-};
-
 const fmt = (n: number) => Math.round(n).toLocaleString('ru-RU').replace(/,/g, ' ');
-
-// Oldingi davrda ma'lumot bo‘lmasa foizni hisoblab bo‘lmaydi
-const growthPct = (cur: number, prev: number): number | null =>
-  prev > 0 ? ((cur - prev) / prev) * 100 : null;
-
-const isRevenueOrder = (o: any) =>
-  o.status !== 'CANCELLED' && (o.paymentStatus === 'PAID' || o.status === 'COMPLETED');
 
 export const ReportsView: React.FC = () => {
   const [datePreset, setDatePreset] = useState<DatePreset>('MONTH');
@@ -104,28 +53,12 @@ export const ReportsView: React.FC = () => {
       .map(e => ({ expense: e, date: parseDate(e.date) }))
       .filter((x): x is { expense: typeof expenses[number]; date: Date } => !!x.date);
 
-    const orderCost = (o: any) =>
-      (o.items || []).reduce(
-        (acc: number, i: any) => acc + (productMap.get(i.productId)?.costPrice || 0) * (i.quantity || 0),
-        0,
-      );
+    const costOf = (productId: string) => productMap.get(productId)?.costPrice || 0;
 
     const summarize = (from: Date, to: Date) => {
       const os = paidOrders.filter(x => x.date >= from && x.date <= to);
       const es = datedExpenses.filter(x => x.date >= from && x.date <= to);
-      const revenue = os.reduce((a, x) => a + (x.order.total || 0), 0);
-      const cogs = os.reduce((a, x) => a + orderCost(x.order), 0);
-      const expenseTotal = es.reduce((a, x) => a + (x.expense.amount || 0), 0);
-      return {
-        os,
-        es,
-        revenue,
-        cogs,
-        expenseTotal,
-        count: os.length,
-        avgCheck: os.length ? revenue / os.length : 0,
-        profit: revenue - cogs - expenseTotal,
-      };
+      return { os, es, ...summarizePeriod(os.map(x => x.order), es.map(x => x.expense), costOf) };
     };
 
     const cur = summarize(start, now);
@@ -159,7 +92,7 @@ export const ReportsView: React.FC = () => {
       const b = index.get(keyOf(date));
       if (!b) return;
       b.revenue += order.total || 0;
-      b.cogs += orderCost(order);
+      b.cogs += orderCost(order, costOf);
       b.orders += 1;
     });
     cur.es.forEach(({ expense, date }) => {
