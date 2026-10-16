@@ -8,9 +8,9 @@ release/
 *.local
 
 # Windows (Electron) desktop build output
-windovs feruzbek/node_modules/
-windovs feruzbek/installer/
-windovs feruzbek/app/
+desktop/node_modules/
+desktop/installer/
+desktop/app/
 
 # Environment / secrets
 .env
