@@ -4,6 +4,66 @@ Restoran va kafe uchun boshqaruv paneli: kassa (POS), oshxona ekrani (KDS), stol
 
 Ma'lumotlar brauzerning `localStorage` xotirasida saqlanadi (server yoki ma'lumotlar bazasi talab qilinmaydi).
 
+![Bosh sahifa](docs/screenshots/03-bosh-sahifa.jpg)
+
+## Qanday ishlaydi
+
+> Rasmlardagi taomlar, buyurtmalar va mijozlar — test rejimida kiritilgan namunaviy ma'lumotlar.
+
+### 1. Birinchi ishga tushirish
+
+Tizim birinchi marta ochilganda yangi restoran ochish yoki mavjud zaxira faylidan tiklash tanlanadi. Keyin 4 qadamda admin akkaunt, restoran va birinchi filial yaratiladi.
+
+| Xush kelibsiz | Admin akkaunt yaratish |
+|---|---|
+| ![Xush kelibsiz](docs/screenshots/01-xush-kelibsiz.jpg) | ![Onboarding](docs/screenshots/02-onboarding.jpg) |
+
+### 2. Kassa (POS)
+
+Taomlar toifalar bo'yicha ko'rsatiladi; bosilgan taom savatga tushadi. Buyurtma turi (zalda, olib ketish, yetkazish), stol, chegirma va oshxona uchun izoh tanlanadi. To'lov naqd, karta, Click, Payme, Uzum yoki aralash usulda qabul qilinadi va chek chiqariladi. To'lov qabul qilish uchun kassa smenasi ochiq bo'lishi kerak.
+
+![Kassa](docs/screenshots/04-kassa-pos.jpg)
+
+### 3. Stollar xaritasi
+
+Zal, VIP va terrasa stollari rang bilan holatini ko'rsatadi: bo'sh (yashil), band (sariq), buyurtma kutmoqda, bron qilingan (ko'k). "Tahrirlash" rejimida stollarni sudrab joylashtirish mumkin.
+
+![Stollar](docs/screenshots/05-stollar.jpg)
+
+### 4. Oshxona ekrani (KDS)
+
+Kassadan yuborilgan buyurtmalar oshxonada uch ustunda ko'rinadi: **Yangi → Tayyorlanmoqda → Tayyor**. Har bir kartada stol, taomlar va o'tgan vaqt taymeri bor; yangi buyurtma kelganda ovozli signal chalinadi.
+
+![Oshxona](docs/screenshots/06-oshxona-kds.jpg)
+
+### 5. Buyurtmalar
+
+Barcha buyurtmalar holati bo'yicha filtrlanadi (yangi, tayyorlanmoqda, tayyor, yopilgan, bekor qilingan), qidiriladi, chek qayta chop etiladi yoki bekor qilinadi.
+
+![Buyurtmalar](docs/screenshots/07-buyurtmalar.jpg)
+
+### 6. Moliya hisoboti
+
+Tanlangan davr (bugun, hafta, oy, yil) bo'yicha tushum, buyurtmalar soni, o'rtacha chek va sof foyda (tushum − tannarx − xarajatlar) hisoblanadi; oldingi davrga nisbatan o'sish foizi, kunlik grafik va toifalar bo'yicha savdo ko'rsatiladi. Hisobotni CSV (Excel) ga yuklab olish mumkin.
+
+![Moliya](docs/screenshots/08-moliya.jpg)
+
+### 7. Omborxona va xarajatlar
+
+Har bir sotuv ombordagi qoldiqni avtomatik kamaytiradi; minimal qoldiqdan kam qolgan mahsulotlar "Kam qoldi" deb belgilanadi. Kirim, chiqim va inventarizatsiya shu yerdan qilinadi. Ijara, ish haqi, kommunal va xomashyo xarajatlari alohida bo'limda yuritiladi va moliya hisobotiga qo'shiladi.
+
+| Omborxona | Xarajatlar |
+|---|---|
+| ![Omborxona](docs/screenshots/09-omborxona.jpg) | ![Xarajatlar](docs/screenshots/10-xarajatlar.jpg) |
+
+### 8. Mijozlar (CRM)
+
+Doimiy mijozlar telefon raqami bilan saqlanadi; ularning buyurtmalar soni va umumiy xaridi avtomatik hisoblanadi.
+
+![Mijozlar](docs/screenshots/11-mijozlar.jpg)
+
+Shuningdek: **Xodimlar** (rollar va ruxsatlar), **Smenalar** (Z-hisobot, kassadagi naqd pul nazorati), **Tizim jurnali** (o'chirib bo'lmaydigan audit log), **Sozlamalar** (til, valyuta, soliq, mavzu, zaxira nusxa).
+
 ## Ishga tushirish
 
 Talab: Node.js 20+
